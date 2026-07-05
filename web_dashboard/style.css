@@ -1,0 +1,610 @@
+/* ==========================================================================
+   Seismic-Ignited Landslide Susceptibility Dashboard Style Sheet
+   Designed with solid colors, clear borders, and professional GIS UI aesthetics.
+   ========================================================================== */
+
+/* Variables defining the solid, high-contrast palette */
+:root {
+    --bg-darker: #0b0f19;       /* Deep layout background */
+    --bg-dark: #121824;         /* Panel/header background */
+    --bg-card: #1c2333;         /* Card background */
+    --border-color: #2b3548;    /* Border separating elements */
+    --text-primary: #f8fafc;    /* Clean white-gray text */
+    --text-secondary: #8e9bb0;  /* Muted blue-gray text */
+    
+    /* Action & Indicator colors (Solid, non-gradient) */
+    --color-primary: #2563eb;   /* Solid Royal Blue for controls/active states */
+    --color-primary-hover: #1d4ed8;
+    --color-danger: #ef4444;    /* Solid hazard red for active landslides/high risk */
+    --color-warning: #f97316;   /* Solid warning orange for seismic alerts/medium risk */
+    --color-success: #10b981;   /* Solid green for stable vegetation/low risk */
+    --color-info: #06b6d4;      /* Solid cyan for coordinates/seismic inputs */
+    --color-terrain: #4b5563;   /* Solid gray for base terrain */
+    
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-darker);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* --- Header Layout --- */
+.app-header {
+    background-color: var(--bg-dark);
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    flex-shrink: 0;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.hazard-badge {
+    background-color: var(--color-warning);
+    color: #000000;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+}
+
+.header-logo h1 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+}
+
+.header-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.status-indicator.online {
+    background-color: var(--color-success);
+}
+
+/* --- Main Layout Container --- */
+.app-container {
+    flex: 1;
+    display: flex;
+    height: calc(100vh - 60px - 30px); /* Adjust for header and footer */
+    overflow: hidden;
+}
+
+/* --- Sidebar Panels --- */
+.sidebar-panel {
+    width: 320px;
+    background-color: var(--bg-dark);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.left-panel {
+    border-right: 1px solid var(--border-color);
+}
+
+.right-panel {
+    border-left: 1px solid var(--border-color);
+    width: 340px;
+}
+
+.panel-section {
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.panel-section h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.section-desc {
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+/* --- Layer Selector Buttons --- */
+.layer-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.layer-btn {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 10px 12px;
+    text-align: left;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.layer-btn:hover {
+    background-color: #242d3e;
+}
+
+.layer-btn.active {
+    border-color: var(--color-primary);
+    background-color: #1e2e4f;
+}
+
+.color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.terrain-dot { background-color: #6b7280; }
+.slope-dot { background-color: #f59e0b; }
+.ndvi-dot { background-color: #10b981; }
+.sar-dot { background-color: #a855f7; }
+.hazard-dot { background-color: #ef4444; }
+
+/* --- Slider & Inputs Controls --- */
+.control-group {
+    margin-bottom: 14px;
+}
+
+.control-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.slider-container input[type="range"] {
+    flex: 1;
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.slider-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    cursor: pointer;
+}
+
+.slider-value {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    min-width: 48px;
+    text-align: right;
+}
+
+select {
+    width: 100%;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 8px 10px;
+    border-radius: 4px;
+    outline: none;
+    font-family: var(--font-sans);
+}
+
+.instruction {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+/* --- Buttons --- */
+.btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    transition: background-color 0.2s;
+    margin-bottom: 8px;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.btn-secondary {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background-color: #242d3e;
+}
+
+.btn-danger {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.btn-danger:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+/* --- Map Panel (Center) --- */
+.main-map-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border-color);
+    background-color: var(--bg-darker);
+    overflow: hidden;
+}
+
+.map-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    overflow: hidden;
+}
+
+.map-toolbar {
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.toolbar-title {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.toolbar-stats {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.toolbar-stats strong {
+    color: var(--color-info);
+    font-family: var(--font-mono);
+}
+
+.canvas-container {
+    flex: 1;
+    background-color: #07090e;
+    border: 1px solid var(--border-color);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+#map-canvas {
+    display: block;
+    cursor: crosshair;
+}
+
+/* --- Earthquake Wave Overlay Alert --- */
+.seismic-alert-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(11, 15, 25, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.seismic-alert-overlay.show {
+    opacity: 1;
+}
+
+.alert-content {
+    background-color: var(--bg-dark);
+    border: 2px solid var(--color-warning);
+    padding: 24px;
+    border-radius: 6px;
+    text-align: center;
+    max-width: 380px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.alert-content h3 {
+    color: var(--color-warning);
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.alert-content p {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.map-footer {
+    padding: 8px 0;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* --- Bottom Model Visualizer --- */
+.model-visualizer-card {
+    background-color: var(--bg-dark);
+    border-top: 1px solid var(--border-color);
+    padding: 16px 24px;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+}
+
+.model-visualizer-card .card-header {
+    margin-bottom: 12px;
+}
+
+.model-visualizer-card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sub-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.visualizer-content {
+    flex: 1;
+    background-color: #0b0f19;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+#model-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* --- Cell Inspector (Right Side) --- */
+.inspector-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+.inspector-item {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-label {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.item-val {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.inspector-item.highlight {
+    border-left: 3px solid var(--color-info);
+}
+
+.inspector-item.danger {
+    border-left: 3px solid var(--color-danger);
+    background-color: rgba(239, 68, 68, 0.05);
+}
+
+.font-mono {
+    font-family: var(--font-mono);
+}
+
+/* --- Risk Summary Card & Progress --- */
+.metric-summary-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+}
+
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.metric-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.metric-val {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-danger);
+    font-family: var(--font-mono);
+}
+
+.progress-bar-bg {
+    background-color: var(--border-color);
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.progress-bar-fill {
+    background-color: var(--color-danger);
+    height: 100%;
+    width: 0%;
+    transition: width 0.4s ease;
+}
+
+.metric-desc {
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: block;
+}
+
+/* --- Charts Container --- */
+.chart-container {
+    margin-top: 14px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.chart-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 4px;
+}
+
+.chart-canvas-wrapper {
+    height: 120px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-canvas-wrapper canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* --- Legends --- */
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 11px;
+}
+
+.legend-color-box {
+    width: 16px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.legend-desc {
+    color: var(--text-secondary);
+}
+
+/* --- Document Section --- */
+.doc-section {
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* --- Footer --- */
+.app-footer {
+    background-color: var(--bg-dark);
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    padding: 6px;
+    color: var(--text-secondary);
+    font-size: 11px;
+    height: 30px;
+    flex-shrink: 0;
+}

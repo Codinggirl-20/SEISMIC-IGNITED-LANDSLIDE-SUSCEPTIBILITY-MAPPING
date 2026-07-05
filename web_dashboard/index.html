@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seismic-Triggered Landslide Susceptibility Mapping Dashboard</title>
+    <!-- Professional Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-logo">
+            <span class="hazard-badge">HAZARD RESPONSE</span>
+            <h1>Seismic-Ignited Landslide Susceptibility Engine</h1>
+        </div>
+        <div class="header-status">
+            <div class="status-indicator online"></div>
+            <span>System Ready (Simulated Inference Model Active)</span>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- LEFT PANEL: Controls & Simulators -->
+        <section class="sidebar-panel left-panel">
+            <div class="panel-section">
+                <h2>1. Remote Sensing & GIS Layers</h2>
+                <p class="section-desc">Select the static or dynamic satellite baseline to overlay on the geospatial canvas.</p>
+                <div class="layer-selector">
+                    <button class="layer-btn active" data-layer="terrain">
+                        <span class="color-dot terrain-dot"></span>
+                        3D Shaded Terrain (DEM)
+                    </button>
+                    <button class="layer-btn" data-layer="slope">
+                        <span class="color-dot slope-dot"></span>
+                        Slope Angle Map
+                    </button>
+                    <button class="layer-btn" data-layer="ndvi">
+                        <span class="color-dot ndvi-dot"></span>
+                        Optical NDVI (Vegetation)
+                    </button>
+                    <button class="layer-btn" data-layer="sar">
+                        <span class="color-dot sar-dot"></span>
+                        SAR Coherence Loss
+                    </button>
+                    <button class="layer-btn" data-layer="susceptibility">
+                        <span class="color-dot hazard-dot"></span>
+                        DL Susceptibility Map
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h2>2. Earthquake Simulator</h2>
+                <p class="section-desc">Configure a seismic event parameters to compute near-real-time PGA and Arias Intensity.</p>
+                
+                <div class="control-group">
+                    <label for="eq-magnitude">Magnitude (M<sub>w</sub>)</label>
+                    <div class="slider-container">
+                        <input type="range" id="eq-magnitude" min="4.0" max="8.5" step="0.1" value="6.8">
+                        <span class="slider-value" id="val-magnitude">6.8</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="eq-depth">Focal Depth (km)</label>
+                    <div class="slider-container">
+                        <input type="range" id="eq-depth" min="5" max="50" step="1" value="12">
+                        <span class="slider-value" id="val-depth">12 km</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="soil-class">Epicentral Soil Type (NEHRP)</label>
+                    <select id="soil-class">
+                        <option value="A">Class A (Hard Rock, V<sub>s30</sub> > 1500m/s)</option>
+                        <option value="B">Class B (Rock, V<sub>s30</sub> ~ 1000m/s)</option>
+                        <option value="C" selected>Class C (Dense Soil/Soft Rock, V<sub>s30</sub> ~ 500m/s)</option>
+                        <option value="D">Class D (Stiff Soil, V<sub>s30</sub> ~ 270m/s)</option>
+                        <option value="E">Class E (Soft Clay, V<sub>s30</sub> < 180m/s)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Epicenter Placement</label>
+                    <p class="instruction">Click anywhere on the map to set the epicenter, or use the button below to randomize.</p>
+                    <button class="btn btn-secondary" id="btn-random-epicenter">Random Epicenter</button>
+                </div>
+
+                <button class="btn btn-primary" id="btn-trigger-eq">Simulate Seismic Event</button>
+                <button class="btn btn-danger" id="btn-reset">Reset Map</button>
+            </div>
+            
+            <div class="panel-section legend-section">
+                <h2>Legend</h2>
+                <div id="legend-container">
+                    <!-- Dynamic legend loaded by app.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- CENTER PANEL: Interactive Map & Model Path -->
+        <section class="main-map-panel">
+            <div class="map-wrapper">
+                <div class="map-toolbar">
+                    <span class="toolbar-title">Active Region: Karakoram-Himalayan Foothills (Simulated 30m Grid)</span>
+                    <div class="toolbar-stats">
+                        <span>Epicenter: <strong id="stat-epicenter">Not Set</strong></span>
+                        <span>Max PGA: <strong id="stat-max-pga">0.00 g</strong></span>
+                    </div>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="map-canvas" width="600" height="450"></canvas>
+                    <div class="seismic-alert-overlay" id="eq-alert">
+                        <div class="alert-content">
+                            <h3>SEISMIC TRIGGER DETECTED</h3>
+                            <p>Calculating wave attenuation and model susceptibility outputs...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="map-footer">
+                    <span>* Hover or click on the map to inspect specific grid cell attributes.</span>
+                </div>
+            </div>
+
+            <!-- Deep Learning Architecture Visualization (Bottom Panel) -->
+            <div class="model-visualizer-card">
+                <div class="card-header">
+                    <h3>Hybrid DL Model Prediction Pathway (Inference Node Trace)</h3>
+                    <span class="sub-label">Real-time trace of the neural network fusion process for the selected cell.</span>
+                </div>
+                <div class="visualizer-content">
+                    <canvas id="model-canvas" height="150"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT PANEL: Cell Inspector & Metrics -->
+        <section class="sidebar-panel right-panel">
+            <div class="panel-section inspector-section">
+                <h2>3. Grid Cell Inspector</h2>
+                <p class="section-desc">Details of the currently inspected/hovered location.</p>
+                <div class="inspector-grid" id="cell-inspector">
+                    <div class="inspector-item">
+                        <span class="item-label">Coordinate</span>
+                        <span class="item-val" id="insp-coord">X: --, Y: --</span>
+                    </div>
+                    <div class="inspector-item">
+                        <span class="item-label">Elevation</span>
+                        <span class="item-val" id="insp-elev">-- m</span>
+                    </div>
+                    <div class="inspector-item">
+                        <span class="item-label">Slope Angle</span>
+                        <span class="item-val" id="insp-slope">--°</span>
+                    </div>
+                    <div class="inspector-item">
+                        <span class="item-label">Aspect</span>
+                        <span class="item-val" id="insp-aspect">--</span>
+                    </div>
+                    <div class="inspector-item">
+                        <span class="item-label">NDVI (Vegetation)</span>
+                        <span class="item-val" id="insp-ndvi">--</span>
+                    </div>
+                    <div class="inspector-item">
+                        <span class="item-label">SAR Coherence</span>
+                        <span class="item-val" id="insp-sar">--</span>
+                    </div>
+                    <div class="inspector-item">
+                        <span class="item-label">Soil Amplification</span>
+                        <span class="item-val" id="insp-soil">--</span>
+                    </div>
+                    <div class="inspector-item highlight">
+                        <span class="item-label">Peak Ground Accel. (PGA)</span>
+                        <span class="item-val font-mono" id="insp-pga">-- g</span>
+                    </div>
+                    <div class="inspector-item highlight">
+                        <span class="item-label">Arias Intensity</span>
+                        <span class="item-val font-mono" id="insp-arias">-- m/s</span>
+                    </div>
+                    <div class="inspector-item danger">
+                        <span class="item-label">Susceptibility Prob.</span>
+                        <span class="item-val font-mono" id="insp-probability">-- %</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section metrics-section">
+                <h2>4. Real-Time Hazard Metrics</h2>
+                
+                <div class="metric-summary-card">
+                    <div class="metric-row">
+                        <span class="metric-title">Critical Area Risk</span>
+                        <span class="metric-val" id="metric-critical-area">0.0%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="metric-critical-fill" style="width: 0%"></div>
+                    </div>
+                    <span class="metric-desc">Percentage of regional grid cells with landslide susceptibility > 70%</span>
+                </div>
+
+                <div class="chart-container">
+                    <span class="chart-title">Susceptibility Distribution (Grid Cells count)</span>
+                    <div class="chart-canvas-wrapper">
+                        <canvas id="distribution-chart" height="110"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <span class="chart-title">SHAP Feature Importance (Dynamic Impact)</span>
+                    <div class="chart-canvas-wrapper">
+                        <canvas id="shap-chart" height="130"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel-section doc-section">
+                <h2>About the Model</h2>
+                <p>This hybrid model operates by extracting a spatial neighborhood patch around each grid cell. A 2D CNN processes the topography & satellite bands, while an MLP ingests transient seismic signals computed via site-specific GMPEs. The fused vector predicts landslide triggering probability.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>Seismic-Ignited Landslide Susceptibility Mapping (SILSM) &copy; 2026. Humanized & Professional GIS Hazard System.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="model_visual.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
